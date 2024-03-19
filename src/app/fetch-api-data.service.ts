@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { catchError } from 'rxjs/internal/operators';
+import { catchError, map } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { map } from 'rxjs/operators';
+// import { map } from 'rxjs/operators';
 
-const apiUrl = 'https://huff-movies-7ddaf8be7bf2.herokuapp.com';
+const apiUrl = 'https://huff-movies-7ddaf8be7bf2.herokuapp.com/';
 @Injectable({
   providedIn: 'root'
 })
@@ -32,16 +32,18 @@ export class UserRegistrationService {
   //Making API call for Get All Movies endpoint
   getAllMovies(): Observable<any> {
     const token = localStorage.getItem('token');
-    return this.http.get(apiUrl + 'movies', {headers: new HttpHeaders(
+    return this.http.get<any[]>(apiUrl + 'movies', {headers: new HttpHeaders(
       {
         Authorization: 'Bearer ' + token,
       })}).pipe(
+
       map(this.extractResponseData),
       catchError(this.handleError)
     );
   }
 // Non-typed response extraction
-  private extractResponseData(res: Response): any {
+
+  private extractResponseData(res: any): any {
     const body = res;
     return body || { };
   }
