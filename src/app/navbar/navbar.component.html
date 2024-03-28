@@ -1,0 +1,16 @@
+<div class="navigation-bar">
+  <h1>MyFlix Movies App</h1>
+  <!-- Button triggering the menu -->
+  <button class="menus" mat-button [matMenuTriggerFor]= "menu">
+    <mat-icon>more_vert</mat-icon> <!-- Icon for the button -->
+  </button>
+  
+  <!-- The menu itself -->
+  <mat-menu #menu="matMenu">
+    <!-- Menu items -->
+    <button mat-menu-item (click)="openMovieList()">Home</button>
+    <button mat-menu-item (click)="openProfile()">Profile</button>
+    <button mat-menu-item (click)="logoutUser()">Logout</button>
+  </mat-menu>
+</div>
+

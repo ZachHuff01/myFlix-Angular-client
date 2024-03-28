@@ -1,5 +1,6 @@
 
 <div style="display:flex" >
+  <app-navbar></app-navbar>
   <div class="movie-card-container">
     <mat-card *ngFor="let movie of movies;" style="flex: 1 1 auto;">
 
@@ -15,6 +16,7 @@
                 <button
                     mat-button
                     color="primary"
+                    (click)="openMovieDetails(movie.Description)"
                     
                 >
                     Synopsis
@@ -22,6 +24,7 @@
                 <button
                     mat-button
                     color="primary"
+                    (click)="getGenre(movie.Genre)"
                 
                 >
                     Genre
@@ -29,17 +32,29 @@
                 <button
                     mat-button
                     color="primary"
+                    (click)="getOneDirector(movie.Director)"
                    
                 >
                     Director
                 </button>
 
-                <button  
-                    class="favorite_border"   
-                    mat-button
-                    color="primary">
-                  <mat-icon>favorite_border</mat-icon>
-                </button>
+                <button
+                *ngIf="!isFavoriteMovie(movie._id)"
+                mat-icon-button
+                (click)="addToFavorites(movie._id)"
+                matTooltip="Add to favorites"
+              >
+                <mat-icon>favorite_border</mat-icon>
+              </button>
+        
+              <button
+                *ngIf="isFavoriteMovie(movie._id)"
+                mat-icon-button
+                (click)="removeFavoriteMovie(movie._id)"
+                matTooltip="Remove from favorites"
+              >
+                <mat-icon>favorite</mat-icon>
+              </button>
            
             </mat-card-actions>
         </div>

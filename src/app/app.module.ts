@@ -3,6 +3,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -20,10 +21,16 @@ import { UserRegistrationFormComponent } from './user-registration-form/user-reg
 import { UserLoginFormComponent } from './user-login-form/user-login-form.component';
 import { MovieCardComponent } from './movie-card/movie-card.component';
 import { WelcomePageComponent } from './welcome-page/welcome-page.component';
+import { ProfileViewComponent } from './profile-view/profile-view.component';
+import { GenreComponent } from './genre/genre.component';
+import { DirectorComponent } from './director/director.component';
+import { MovieDetailsComponent } from './movie-details/movie-details.component';
+import { NavbarComponent } from './navbar/navbar.component';
 
 const appRoutes: Routes = [
   { path: 'welcome', component: WelcomePageComponent },
   { path: 'movies', component: MovieCardComponent },
+  { path: 'profile', component: ProfileViewComponent},
   { path: '', redirectTo: 'welcome', pathMatch: 'prefix' },
 ];
 
@@ -33,7 +40,12 @@ const appRoutes: Routes = [
     UserRegistrationFormComponent,
     UserLoginFormComponent,
     MovieCardComponent,
-    WelcomePageComponent
+    WelcomePageComponent,
+    ProfileViewComponent,
+    GenreComponent,
+    DirectorComponent,
+    MovieDetailsComponent,
+    NavbarComponent
   ],
   imports: [
     BrowserModule,
@@ -48,6 +60,7 @@ const appRoutes: Routes = [
     MatDialogModule,
     MatSnackBarModule,
     MatIconModule,
+    MatMenuModule,
     RouterModule.forRoot(appRoutes)
     
   ],

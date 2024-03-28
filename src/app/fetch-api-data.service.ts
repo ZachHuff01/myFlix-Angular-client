@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { catchError, map } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { Observable, throwError, BehaviorSubject, of  } from 'rxjs';
 // import { map } from 'rxjs/operators';
 
 const apiUrl = 'https://huff-movies-7ddaf8be7bf2.herokuapp.com/';
@@ -9,7 +9,13 @@ const apiUrl = 'https://huff-movies-7ddaf8be7bf2.herokuapp.com/';
   providedIn: 'root'
 })
 
-export class UserRegistrationService {
+export class FetchApiDataService {
+
+  private userData = new BehaviorSubject<Object>({ Username: '', Password: '', Email: '', Birth: ''});
+  currentUser = this.userData.asObservable();
+
+  private movies = new BehaviorSubject<Object>({});
+  moviesList = this.movies.asObservable(); 
   // Inject the HttpClient module to the constructor params
  // This will provide HttpClient to the entire class, making it available via this.http
   constructor(private http: HttpClient) {
@@ -89,8 +95,31 @@ export class UserRegistrationService {
   //Making API call for Get User endpoint
   getUser(): Observable<any> {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    return user;
+    return of(user); //chatgpt fix 
   }
+
+  //chatgpt fix 
+  public getOneUser(): Observable<any> {
+    let user = JSON.parse(localStorage.getItem('user') || '');
+    return new Observable((observer) => {
+      this.getUser().subscribe((response) => {
+        if (Array.isArray(response)) { // Check if response is an array
+          user = response.find((item: any) => item.Username === user.Username);
+        }
+        this.userData.next(user); // Emit user data through the subject
+        observer.next(user); // Emit user data through the observable
+        observer.complete(); // Complete the observable
+      });
+    });
+  }
+  // public getOneUser() {
+  //   let user = JSON.parse(localStorage.getItem('user') || '');
+  //   this.getUser().subscribe((response) => {
+  //     user = response.filter((item: any) => item.Username == user.Username);
+  //   })
+  //   this.userData.next(user);
+  //   return user;
+  // }
   
   //Making API call for Get Favorite Movies endpoint
   getFavoriteMovies(username: string): Observable<any> {
@@ -111,13 +140,18 @@ export class UserRegistrationService {
     const token = localStorage.getItem('token');
     console.log('in fetch api service: ', movie);
     console.log('in fetch api service_id: ', movie._id);
-    return this.http.post(apiUrl + 'users/' + user.Username + '/movies/' + movie._id, null, {headers: new HttpHeaders(
+    return this.http.post(apiUrl + 'users/' + user.Username + '/movies/' + movie, null, {headers: new HttpHeaders(
       {
         Authorization: 'Bearer ' + token,
       })}).pipe(
       map(this.extractResponseData),
       catchError(this.handleError)
     );
+  }
+
+  isFavoriteMovie(movieID: string): boolean {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    return user.FavoriteMovies.indexOf(movieID) >= 0;
   }
 
   //Making API call to Edit User Info endpoint
@@ -150,8 +184,8 @@ export class UserRegistrationService {
   deleteFavoriteMovies(movie: any): Observable<any> {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const token = localStorage.getItem('token');
-    console.log('in fetch api service: ', movie._id);
-    return this.http.delete(apiUrl + 'users/' + user.Username + '/movies/' + movie._id, {headers: new HttpHeaders(
+    console.log('in fetch api service: ', movie);
+    return this.http.delete(apiUrl + 'users/' + user.Username + '/movies/' + movie, {headers: new HttpHeaders(
       {
         Authorization: 'Bearer ' + token,
       })}).pipe(
@@ -174,7 +208,3 @@ private handleError(error: HttpErrorResponse): any {
   }
 }
 
-export class FetchApiDataService {
-
-  constructor() { }
-}
